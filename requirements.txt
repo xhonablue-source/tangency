@@ -1,0 +1,39 @@
+# Requirements for Advanced Tangency Educational App
+# Compatible with Python 3.8+
+
+# Core Streamlit Framework
+streamlit>=1.28.0
+
+# Data Science and Numerical Computing
+numpy>=1.21.0
+pandas>=1.3.0
+
+# Plotting and Visualization
+matplotlib>=3.5.0
+
+# Mathematical Operations
+math  # Built-in Python module (no installation needed)
+
+# Input/Output Operations
+io  # Built-in Python module (no installation needed)
+
+# Optional: For enhanced mathematical computations
+scipy>=1.7.0
+
+# Optional: For symbolic mathematics (if extending functionality)
+sympy>=1.9.0
+
+# Optional: For additional plotting capabilities
+plotly>=5.0.0
+seaborn>=0.11.0
+
+# Development and Testing (optional)
+pytest>=6.0.0
+black>=21.0.0
+flake8>=3.9.0
+
+# Installation Notes:
+# 1. Install with: pip install -r requirements.txt
+# 2. For conda users: conda install streamlit numpy matplotlib pandas
+# 3. Minimum Python version: 3.8
+# 4. Recommended Python version: 3.9 or higher
