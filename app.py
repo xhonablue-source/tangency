@@ -131,6 +131,46 @@ def generate_tangency_images():
     images['normal_line'] = buf
     plt.close()
     
+    # Ellipse Tangency
+    fig, ax = plt.subplots(figsize=(4, 3), facecolor='white')
+    
+    # Create ellipse: x²/9 + y²/4 = 1 (a=3, b=2)
+    theta = np.linspace(0, 2*np.pi, 100)
+    a, b = 3, 2
+    x_ellipse = a * np.cos(theta)
+    y_ellipse = b * np.sin(theta)
+    ax.plot(x_ellipse, y_ellipse, 'darkorange', linewidth=3, label='Ellipse: x²/9 + y²/4 = 1')
+    
+    # Point on ellipse at parameter t = π/4
+    t = math.pi/4
+    x_point = a * math.cos(t)
+    y_point = b * math.sin(t)
+    ax.plot(x_point, y_point, 'ro', markersize=8, label=f'Point ({x_point:.2f}, {y_point:.2f})')
+    
+    # Tangent line slope: dy/dx = -(b²x)/(a²y)
+    if y_point != 0:
+        slope = -(b**2 * x_point) / (a**2 * y_point)
+        x_tan_line = np.linspace(-1, 4, 100)
+        y_tan_line = slope * (x_tan_line - x_point) + y_point
+        ax.plot(x_tan_line, y_tan_line, 'red', linewidth=2, label='Tangent Line')
+    
+    # Draw foci
+    c = math.sqrt(a**2 - b**2)  # focal distance
+    ax.plot(c, 0, 'bs', markersize=6, label='Foci')
+    ax.plot(-c, 0, 'bs', markersize=6)
+    
+    ax.set_xlim(-4, 4)
+    ax.set_ylim(-3, 3)
+    ax.set_aspect('equal')
+    ax.grid(True, alpha=0.3)
+    ax.legend(fontsize=7)
+    ax.set_title('Tangent to Ellipse', fontweight='bold')
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png', facecolor='white', bbox_inches='tight', dpi=100)
+    buf.seek(0)
+    images['ellipse_tangent'] = buf
+    plt.close()
+    
     return images
 
 # Header
@@ -180,6 +220,7 @@ st.markdown("""
 - **Derivative as Slope:** `m = f'(x₁)` at point x₁
 - **Normal Line Slope:** `m_normal = -1/m_tangent` (negative reciprocal)
 - **Circle Tangent:** For circle x² + y² = r², tangent at (a,b) has slope `m = -a/b`
+- **Ellipse Tangent:** For ellipse x²/A² + y²/B² = 1, tangent at (x₁,y₁) has slope `m = -(B²x₁)/(A²y₁)`
 """)
 
 # Visual Gallery
@@ -204,6 +245,9 @@ try:
         
         st.image(tangency_images['normal_line'], caption="Tangent vs Normal", use_container_width=True)
         st.markdown("**Concept:** Normal line is perpendicular to tangent line")
+        
+        st.image(tangency_images['ellipse_tangent'], caption="Ellipse Tangent", use_container_width=True)
+        st.markdown("**Concept:** Ellipse tangent reflects between foci with equal angles")
         
 except Exception as e:
     st.error(f"Error generating images: {e}")
@@ -350,58 +394,223 @@ elif problem_type == "Find normal line equation":
         **Answer:** The normal line is y = -1/6 x + 19/2
         """)
 
-# Interactive Quiz
+# Ellipse Tangency Deep Dive
 st.markdown("""
-### 🎮 Tangency Mastery Quiz
-Test your understanding with this comprehensive quiz!
+### 🥚 Ellipse Tangency: Advanced Concepts
+
+Ellipses have fascinating tangency properties that connect geometry, algebra, and physics. Unlike circles, 
+ellipses have **two focal points** that create unique reflection properties crucial in astronomy, optics, and engineering.
 """)
 
-# Question 1
-st.markdown("**Question 1:** What is the slope of the tangent line to f(x) = x³ at x = 2?")
-q1_answer = st.radio(
-    "Select your answer:",
-    ["6", "8", "12", "16"],
-    key="tq1"
-)
+# Ellipse Tangency Theory
+col1, col2 = st.columns(2)
 
-# Question 2
-st.markdown("**Question 2:** If a tangent line has slope 4, what is the slope of the normal line?")
-q2_answer = st.radio(
-    "Select your answer:",
-    ["-4", "-1/4", "1/4", "4"],
-    key="tq2"
-)
-
-# Question 3
-st.markdown("**Question 3:** For the circle x² + y² = 25, what is the slope of the tangent at point (3, 4)?")
-q3_answer = st.radio(
-    "Select your answer:",
-    ["3/4", "-3/4", "4/3", "-4/3"],
-    key="tq3"
-)
-
-# Question 4
-st.markdown("**Question 4:** The derivative f'(x) represents which geometric concept?")
-q4_answer = st.radio(
-    "Select your answer:",
-    ["Area under curve", "Slope of tangent line", "x-intercept", "Maximum value"],
-    key="tq4"
-)
-
-# Question 5
-st.markdown("**Question 5:** In real life, what does a tangent line to a position vs. time graph represent?")
-q5_answer = st.radio(
-    "Select your answer:",
-    ["Acceleration", "Distance", "Instantaneous velocity", "Average speed"],
-    key="tq5"
-)
-
-# Submit Quiz
-if st.button("📊 Submit Tangency Quiz"):
-    score = 0
-    total_questions = 5
+with col1:
+    st.markdown("""
+    **🔸 Key Properties of Ellipse Tangents:**
     
-    # Check answers with detailed explanations
+    **1. Reflection Property**
+    - Any ray from one focus reflects off the ellipse and passes through the other focus
+    - The tangent line bisects the angle between the focal radii
+    - This property is used in elliptical mirrors and whispering galleries
+    
+    **2. Mathematical Formula**
+    - For ellipse: `x²/a² + y²/b² = 1`
+    - Tangent at point (x₁, y₁): `(x₁·x)/a² + (y₁·y)/b² = 1`
+    - Slope: `m = -(b²x₁)/(a²y₁)`
+    
+    **3. Focal Distance**
+    - Distance between foci: `2c` where `c² = a² - b²`
+    - Sum of distances from any point to both foci = `2a` (constant!)
+    """)
+
+with col2:
+    st.markdown("""
+    **🌍 Real-World Applications:**
+    
+    **🛰️ Satellite Orbits**
+    - Planets orbit in ellipses with the Sun at one focus
+    - Tangent to orbit gives instantaneous velocity direction
+    
+    **🏥 Medical Imaging**
+    - Elliptical reflectors in lithotripsy focus sound waves
+    - Tangent properties ensure precise targeting
+    
+    **🏛️ Architecture**
+    - Whispering galleries use elliptical domes
+    - Sound from one focus reflects to the other focus
+    
+    **🔭 Telescopes**
+    - Elliptical mirrors collect and focus light
+    - Tangent calculations optimize light gathering
+    """)
+
+# Interactive Ellipse Calculator
+st.markdown("""
+### 🧮 Interactive Ellipse Tangent Calculator
+Calculate tangent lines to any ellipse at specified points.
+""")
+
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    a_ellipse = st.number_input("Semi-major axis (a)", value=3.0, min_value=0.1, step=0.1)
+with col2:
+    b_ellipse = st.number_input("Semi-minor axis (b)", value=2.0, min_value=0.1, step=0.1)
+with col3:
+    x_ellipse_point = st.number_input("x-coordinate", value=1.5, step=0.1)
+with col4:
+    if st.button("🔍 Calculate Ellipse Tangent"):
+        # Check if point is on ellipse and calculate y
+        discriminant = b_ellipse**2 * (1 - x_ellipse_point**2/a_ellipse**2)
+        if discriminant >= 0:
+            y_ellipse_point = math.sqrt(discriminant)
+            
+            # Calculate slope
+            if y_ellipse_point != 0:
+                slope_ellipse = -(b_ellipse**2 * x_ellipse_point) / (a_ellipse**2 * y_ellipse_point)
+                
+                # Display results
+                st.success(f"**Point on ellipse:** ({x_ellipse_point:.2f}, {y_ellipse_point:.2f})")
+                st.success(f"**Tangent slope:** {slope_ellipse:.3f}")
+                
+                # Tangent line equation
+                y_intercept = y_ellipse_point - slope_ellipse * x_ellipse_point
+                st.success(f"**Tangent equation:** y = {slope_ellipse:.3f}x + {y_intercept:.3f}")
+                
+                # Focal information
+                if a_ellipse > b_ellipse:
+                    c_focal = math.sqrt(a_ellipse**2 - b_ellipse**2)
+                    st.info(f"**Foci located at:** (±{c_focal:.2f}, 0)")
+                    
+                    # Distance to foci
+                    dist1 = math.sqrt((x_ellipse_point - c_focal)**2 + y_ellipse_point**2)
+                    dist2 = math.sqrt((x_ellipse_point + c_focal)**2 + y_ellipse_point**2)
+                    st.info(f"**Sum of focal distances:** {dist1 + dist2:.2f} (should equal 2a = {2*a_ellipse})")
+            else:
+                st.warning("Point is on the major axis - tangent is vertical")
+        else:
+            st.error("Point is outside the ellipse. Choose a smaller x-value.")
+
+# Ellipse vs Circle Comparison
+st.markdown("""
+### ⚖️ Ellipse vs Circle Tangency Comparison
+""")
+
+comparison_data = {
+    "Property": [
+        "Basic Equation",
+        "Tangent Formula",
+        "Slope Formula", 
+        "Focal Points",
+        "Reflection Property",
+        "Applications"
+    ],
+    "Circle": [
+        "x² + y² = r²",
+        "xx₁ + yy₁ = r²",
+        "m = -x₁/y₁",
+        "One center point",
+        "Angle of incidence = Angle of reflection",
+        "Radar dishes, mirrors"
+    ],
+    "Ellipse": [
+        "x²/a² + y²/b² = 1",
+        "(x₁x)/a² + (y₁y)/b² = 1",
+        "m = -(b²x₁)/(a²y₁)",
+        "Two foci (±c, 0)",
+        "Ray from one focus → other focus",
+        "Planetary orbits, medical devices"
+    ]
+}
+
+import pandas as pd
+df_comparison = pd.DataFrame(comparison_data)
+st.table(df_comparison)
+
+# Ellipse Practice Problems
+st.markdown("""
+### 📝 Ellipse Tangency Practice Problems
+
+**🔸 Basic Level:**
+1. Find the tangent to ellipse x²/25 + y²/9 = 1 at point (4, 9/5)
+2. What is the slope of the tangent to x²/16 + y²/4 = 1 at x = 2?
+3. Where are the foci of the ellipse x²/36 + y²/16 = 1?
+
+**🔸 Intermediate Level:**
+4. Find all points on x²/9 + y²/4 = 1 where the tangent has slope -1/2
+5. Show that the tangent to an ellipse at any point bisects the angle between focal radii
+6. Find the equation of the normal line to x²/25 + y²/16 = 1 at point (3, 16/5)
+
+**🔸 Advanced Level:**
+7. Prove that the product of the distances from the foci to any tangent line is constant
+8. Find the envelope of all tangent lines to an ellipse (hint: it's another ellipse!)
+9. Application: A satellite in elliptical orbit - find velocity direction at aphelion
+""")
+
+# Interactive Challenge
+st.markdown("""
+### 🎯 Ellipse Challenge: Whispering Gallery
+""")
+
+st.markdown("""
+**Scenario:** You're designing a whispering gallery with an elliptical dome. A person stands at one focus 
+and whispers. Where should the listener stand to hear the whisper most clearly?
+""")
+
+challenge_answer = st.radio(
+    "Where should the listener stand?",
+    [
+        "At the center of the ellipse",
+        "At the other focus",
+        "Anywhere on the ellipse",
+        "At the vertex of the ellipse"
+    ],
+    key="ellipse_challenge"
+)
+
+if st.button("🔍 Check Challenge Answer"):
+    if challenge_answer == "At the other focus":
+        st.balloons()
+        st.success("""
+        🎉 Correct! The listener should stand at the **other focus**!
+        
+        **Explanation:** Due to the reflection property of ellipses, sound waves from one focus 
+        will reflect off the elliptical surface and converge at the other focus. This is why 
+        whispering galleries work - the tangent line at any point on the ellipse bisects the 
+        angle between the lines connecting that point to the two foci.
+        
+        **Famous Examples:**
+        - St. Paul's Cathedral, London
+        - The Capitol Building, Washington D.C.
+        - Grand Central Terminal, New York
+        """)
+    else:
+        st.error(f"""
+        ❌ Not quite! You selected "{challenge_answer}".
+        
+        Think about the reflection property: tangent lines to an ellipse have a special 
+        relationship with the two focal points. Sound from one focus reflects to where?
+        """)
+
+# Add to existing quiz section
+st.markdown("""
+### 🎮 Extended Quiz: Including Ellipse Tangency
+""")
+
+# Additional ellipse question
+st.markdown("**Question 6:** For ellipse x²/9 + y²/4 = 1, what is the slope of the tangent at point (3cos(π/6), 2sin(π/6))?")
+q6_answer = st.radio(
+    "Select your answer:",
+    ["-√3/3", "-√3", "-1/√3", "-3/√3"],
+    key="tq6"
+)
+
+# Update the quiz submission section
+if st.button("📊 Submit Extended Tangency Quiz"):
+    score = 0
+    total_questions = 6  # Updated to include ellipse question
+    
+    # Previous questions (1-5) remain the same...
     if q1_answer == "12":
         score += 1
         st.success("✅ Question 1: Correct! f'(x) = 3x², so f'(2) = 3(4) = 12")
@@ -432,19 +641,26 @@ if st.button("📊 Submit Tangency Quiz"):
     else:
         st.error(f"❌ Question 5: You selected {q5_answer}. Correct answer: Instantaneous velocity")
     
+    # New ellipse question
+    if q6_answer == "-√3/3":
+        score += 1
+        st.success("✅ Question 6: Correct! At point (3√3/2, 1), slope = -(4·3√3/2)/(9·1) = -2√3/3 = -√3/3")
+    else:
+        st.error(f"❌ Question 6: You selected {q6_answer}. Correct answer: -√3/3 (use ellipse slope formula)")
+    
     # Final score
     percentage = (score / total_questions) * 100
-    if percentage >= 80:
+    if percentage >= 83:  # Adjusted for 6 questions
         st.balloons()
         st.success(f"🏆 Outstanding! You scored {score}/{total_questions} ({percentage:.0f}%) - You've mastered tangency!")
-    elif percentage >= 60:
+    elif percentage >= 67:  # Adjusted threshold
         st.info(f"📈 Good work! You scored {score}/{total_questions} ({percentage:.0f}%) - Review key concepts and try again!")
     else:
         st.warning(f"📚 You scored {score}/{total_questions} ({percentage:.0f}%) - Study the material above and retake the quiz.")
 
-# Reset Quiz
-if st.button("🔄 Reset Quiz"):
-    for key in ['tq1', 'tq2', 'tq3', 'tq4', 'tq5']:
+# Reset Quiz (updated)
+if st.button("🔄 Reset Extended Quiz"):
+    for key in ['tq1', 'tq2', 'tq3', 'tq4', 'tq5', 'tq6']:
         if key in st.session_state:
             del st.session_state[key]
     st.success("Quiz reset! Scroll up to retake the quiz.")
